@@ -1,22 +1,19 @@
-package controller;
+package com.example.inventory.controller;
 
-import entities.Product;
-import jakarta.persistence.Id;
+import com.example.inventory.entities.Product;
+import com.example.inventory.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import services.ProductService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/inventory")
 @RequiredArgsConstructor
-public class ProductController {
+public class InventoryController {
 
-    @Autowired
     private final ProductService productService;
 
     @GetMapping("/products")
@@ -48,10 +45,4 @@ public class ProductController {
         productService.removeProduct(productId);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/ping")
-    public String ping() {
-        return "Hello World";
-    }
-
 }

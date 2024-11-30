@@ -1,12 +1,11 @@
-package services;
+package com.example.inventory.service;
 
-import entities.Product;
+import com.example.inventory.entities.Product;
+import com.example.inventory.repositories.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import repository.ProductRepository;
 
-import java.security.PublicKey;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,7 @@ public class ProductService {
     }
 
     public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
+        return productRepository.findById(Math.toIntExact(id));
     }
 
     public Product registerProduct(Product product) {
@@ -30,7 +29,7 @@ public class ProductService {
 
     @Transactional
     public boolean checkAvailability(Long id, Integer quantity) {
-        Optional<Product> product = productRepository.findById(id);
+        Optional<Product> product = productRepository.findById(Math.toIntExact(id));
         Product addproduct;
 
         if (product.isPresent()) {
@@ -43,7 +42,7 @@ public class ProductService {
 
     @Transactional
     public Product updateStock(Long id, Integer quantity) {
-        Optional<Product> productOptional = productRepository.findById(id);
+        Optional<Product> productOptional = productRepository.findById(Math.toIntExact(id));
 
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
@@ -60,8 +59,7 @@ public class ProductService {
 
     @Transactional
     public void removeProduct(Long id) {
-        Product product = productRepository.findById(id).get();
-
+        Product product = productRepository.findById(Math.toIntExact(id)).get();
         productRepository.delete(product);
     }
 

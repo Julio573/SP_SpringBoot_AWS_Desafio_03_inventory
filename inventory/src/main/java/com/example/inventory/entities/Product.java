@@ -1,4 +1,4 @@
-package entities;
+package com.example.inventory.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
