@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,32 +32,28 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    @Transactional
-    public boolean checkAvailability(Long id, Integer quantity) {
-        log.info("Checking if product with id {} is available", id);
-        Optional<Product> product = productRepository.findById(Math.toIntExact(id));
-        Product addproduct;
+//    @Transactional
+//    public boolean checkAvailability(Long id, Integer quantity) {
+//        log.info("Verifies a product availability {}", id);
+//        Product product = productRepository.findById(Math.toIntExact(id))
+//                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+//        boolean isAvailable = product.getAmountInStock() >= quantity;
+//        if (!isAvailable) {
+//            log.warn("Insufficient stock for product with ID: {}. Amount required: {}, Available: {}", id, quantity, product.getAmountInStock());
+//            throw new IllegalArgumentException("Insufficient stock for product with ID: " + id);
+//        }
+//        return true;
+//    }
 
-        if (product.isPresent()) {
-            addproduct = product.get();
-            return addproduct.getAmountInStock() >= quantity;
-        }
-        return false;
-    }
-
     @Transactional
-    public Product updateStock(Long id, Integer quantityChange) {
+    public Product updateStock(Long id, Integer quantity) {
+        log.info("Updating stock for product with ID: {}. Adjusting by: {}", id, quantity);
         Product product = productRepository.findById(Math.toIntExact(id))
                 .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + id));
 
-        int newAmount = product.getAmountInStock() + quantityChange;
-
-        if (newAmount < 0) {
-            log.error("Insufficient stock for product with ID: {}", id);
-            throw new IllegalArgumentException("Insufficient stock for product with ID: " + id);
-        }
-
+        int newAmount = product.getAmountInStock() + quantity;
         product.setAmountInStock(newAmount);
+
         return productRepository.save(product);
     }
 
