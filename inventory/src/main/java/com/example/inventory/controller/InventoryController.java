@@ -48,16 +48,20 @@ public class InventoryController {
     }
 
     @PostMapping("/amount")
-    public ResponseEntity<Product> updateProductAmount(@PathVariable Long ProductId, @RequestBody Integer quantity) {
-        log.info("Request to change a product's amount {}", ProductId);
-        Product product = productService.updateStock(ProductId, quantity);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<Product> updateProductAmount(@PathVariable Long id, @RequestBody Integer quantity) {
+        log.info("Request to update a product's amount {}", id);
+        Product updatedProduct = productService.updateStock(id, quantity);
+        if (updatedProduct == null) {
+            log.error("Could't update product's stoc with ID: {}", id);
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/remove/{productId}")
-    public ResponseEntity<Void> removeProduct(@PathVariable Long ProductId, @PathVariable String productId) {
-        log.info("Request to remove a product from inventory {}", ProductId);
-        productService.removeProduct(ProductId);
+    public ResponseEntity<Void> removeProduct(@PathVariable String productId) {
+        log.info("Request to remove a product from inventory {}", productId);
+        productService.removeProduct(Long.valueOf(productId));
         return ResponseEntity.noContent().build();
     }
 }

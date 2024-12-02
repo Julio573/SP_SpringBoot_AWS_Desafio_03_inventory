@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -46,27 +47,30 @@ public class ProductService {
     }
 
     @Transactional
-    public Product updateStock(Long id, Integer quantity) {
-        log.info("Updating product with id {} with quantity {}", id, quantity);
-        Optional<Product> productOptional = productRepository.findById(Math.toIntExact(id));
+    public Product updateStock(Long id, Integer quantityChange) {
+        Product product = productRepository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new IllegalArgumentException("Product not found for ID: " + id));
 
-        if (productOptional.isPresent()) {
-            Product product = productOptional.get();
-            int newAmount = product.getAmountInStock() - quantity;
+        int newAmount = product.getAmountInStock() + quantityChange;
 
-            if (newAmount >= 0) {
-                product.setAmountInStock(newAmount);
-                return productRepository.save(product);
-            }
+        if (newAmount < 0) {
+            log.error("Insufficient stock for product with ID: {}", id);
+            throw new IllegalArgumentException("Insufficient stock for product with ID: " + id);
         }
-        return null;
+
+        product.setAmountInStock(newAmount);
+        return productRepository.save(product);
     }
 
     @Transactional
     public void removeProduct(Long id) {
         log.info("Removing product with id {}", id);
-        Product product = productRepository.findById(Math.toIntExact(id)).get();
+        Product product = productRepository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new NoSuchElementException("Product not found with id: " + id));
+
         productRepository.delete(product);
     }
-
 }
+
+
+
