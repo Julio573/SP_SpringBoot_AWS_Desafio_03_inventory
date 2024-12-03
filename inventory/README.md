@@ -13,9 +13,7 @@
 * Spring Web
 * Lombok
 * Swagger
-* OpenFeign
-* PostMan
-* Docker
+* Op
 
 It should also implement concepts such as Object-oriented programming, Lambda expressions, control structures, Date and Time handling, Enumerations, Exception/Error Handling, Generics, Collections (Set and Map), functional programming.
 
